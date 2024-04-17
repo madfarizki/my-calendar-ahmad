@@ -1,5 +1,7 @@
+import { Home } from "./views";
+
 function App() {
-  return <></>;
+  return <Home />;
 }
 
 export default App;
