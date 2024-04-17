@@ -1,0 +1,13 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  scroll-behavior: smooth;
+  width: 100%;
+  min-height: 100%;
+  font-size: 14px;
+  font-family: Poppins, sans-serif;
+}
