@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Button } from "@/components/index";
+import { ButtonVariant } from "@/components/ui/Button";
 
 import {
   Container,
@@ -35,10 +37,12 @@ function EventForm({ date, event, isOpen, onCancel, onSave, onDelete }: EventFor
   const [time, setTime] = useState(event ? event?.time : "");
   const [invitees, setInvitees] = useState(event ? event?.invitees?.join(", ") : "");
 
+  const isDisabled = !name.trim() || !time.trim() || !invitees.trim();
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (name.trim() && time.trim() && invitees.trim()) {
+    if (!isDisabled) {
       handleSave();
     } else {
       alert("Please fill in all required fields.");
@@ -50,7 +54,7 @@ function EventForm({ date, event, isOpen, onCancel, onSave, onDelete }: EventFor
       id: event ? event?.id : new Date().getTime().toString(),
       name,
       time,
-      invitees: invitees.split(",").map((email) => email?.trim()),
+      invitees: invitees?.split(",").map((email) => email?.trim()),
       date,
     };
     onSave(newEvent);
@@ -91,15 +95,17 @@ function EventForm({ date, event, isOpen, onCancel, onSave, onDelete }: EventFor
             <Input type="text" value={invitees} onChange={(e) => setInvitees(e?.target?.value)} />
           </Item>
           <ButtonWrapper>
-            <button type="submit">{event ? "Update" : "Save"}</button>
+            <Button variant={ButtonVariant.PRIMARY} disabled={isDisabled} size="m" type="submit">
+              {event ? "Update" : "Save"}
+            </Button>
             {event && (
-              <button type="button" onClick={handleDelete}>
+              <Button variant={ButtonVariant.DANGER} size="m" type="button" onClick={handleDelete}>
                 Delete
-              </button>
+              </Button>
             )}
-            <button type="button" onClick={onCancel}>
+            <Button variant={ButtonVariant.SECONDARY} size="m" type="button" onClick={onCancel}>
               Cancel
-            </button>
+            </Button>
           </ButtonWrapper>
         </Form>
       </ModalContent>
