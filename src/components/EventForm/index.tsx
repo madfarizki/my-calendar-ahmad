@@ -15,10 +15,11 @@ import {
 
 type EventFormProps = {
   date: string;
-  event?: Event;
+  event?: Event | null;
   isOpen: boolean;
-  onSave: (event: Event) => void;
   onCancel: () => void;
+  onSave: (event: Event) => void;
+  onDelete: (eventId: string) => void;
 };
 
 export type Event = {
@@ -29,7 +30,7 @@ export type Event = {
   date: string;
 };
 
-function EventForm({ date, event, isOpen, onCancel, onSave }: EventFormProps) {
+function EventForm({ date, event, isOpen, onCancel, onSave, onDelete }: EventFormProps) {
   const [name, setName] = useState(event ? event?.name : "");
   const [time, setTime] = useState(event ? event?.time : "");
   const [invitees, setInvitees] = useState(event ? event?.invitees?.join(", ") : "");
@@ -55,6 +56,16 @@ function EventForm({ date, event, isOpen, onCancel, onSave }: EventFormProps) {
     onSave(newEvent);
   };
 
+  const handleDelete = () => {
+    if (event && event?.id) {
+      const confirmDelete = window.confirm("Are you sure you want to delete this event?");
+      if (confirmDelete) {
+        onDelete(event?.id);
+        onCancel();
+      }
+    }
+  };
+
   return (
     <Container isOpen={isOpen}>
       <ModalContent>
@@ -62,15 +73,15 @@ function EventForm({ date, event, isOpen, onCancel, onSave }: EventFormProps) {
         <Title>{event ? "Edit Event" : "Add New Event"}</Title>
         <Form onSubmit={handleSubmit}>
           <Item>
-            <Label>Name </Label>
+            <Label>Name</Label>
             <Input type="text" value={name} onChange={(e) => setName(e?.target?.value)} />
           </Item>
           <Item>
-            <Label>Date </Label>
+            <Label>Date</Label>
             <Input type="date" value={date} disabled />
           </Item>
           <Item>
-            <Label>Time </Label>
+            <Label>Time</Label>
             <Input type="time" value={time} onChange={(e) => setTime(e?.target?.value)} />
           </Item>
           <Item>
@@ -81,6 +92,11 @@ function EventForm({ date, event, isOpen, onCancel, onSave }: EventFormProps) {
           </Item>
           <ButtonWrapper>
             <button type="submit">{event ? "Update" : "Save"}</button>
+            {event && (
+              <button type="button" onClick={handleDelete}>
+                Delete
+              </button>
+            )}
             <button type="button" onClick={onCancel}>
               Cancel
             </button>
