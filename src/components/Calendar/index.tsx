@@ -2,8 +2,11 @@ import React, { useEffect, useState } from "react";
 
 import { DATE } from "@/consts/index";
 import { getCalendar } from "@/utils/index";
+import { getColor } from "@/utils/colors";
+import { EventForm } from "@/components/index";
+import { Event as TEvent } from "@/components/EventForm";
 
-import { Container, Grid, Title } from "./calendar.styles";
+import { Container, Grid, Title, EventName } from "./calendar.styles";
 import CalendarItems from "./components/CalendarItems";
 
 const { DAY_LIST, MONTH_LIST, MONTH_LIST_SHORT } = DATE;
@@ -23,6 +26,14 @@ const Calendar = () => {
   const month = MONTH_LIST[originalMonth];
 
   const [calendar, setCalendar] = useState<CalendarType>({ prev: [], current: [], next: [] });
+  const [events, setEvents] = useState<TEvent[]>(() => {
+    const savedEvents = localStorage.getItem("calendarEvents");
+    return savedEvents ? JSON.parse(savedEvents) : [];
+  });
+
+  const [showForm, setShowForm] = useState(false);
+  const [currentDate, setCurrentDate] = useState<string | null>();
+  const [editingEvent, setEditingEvent] = useState<TEvent | null>();
 
   useEffect(() => {
     fillCalendar();
@@ -31,6 +42,65 @@ const Calendar = () => {
   const fillCalendar = () => {
     const newCalendar = getCalendar(originalMonth, originalYear);
     setCalendar(newCalendar);
+  };
+
+  useEffect(() => {
+    localStorage.setItem("calendarEvents", JSON.stringify(events));
+  }, [events]);
+
+  const addEvent = (newEvent: TEvent) => {
+    const eventDay = events.filter((event) => event.date === newEvent.date);
+
+    if (eventDay.length >= 3) {
+      alert("You can only add up to 3 events per day.");
+      return;
+    }
+
+    setEvents((prevEvents) => [...prevEvents, newEvent]);
+    setShowForm(false);
+  };
+
+  const editEvent = (updatedEvent: TEvent) => {
+    setEvents((prevEvents) =>
+      prevEvents.map((event) => (event.id === updatedEvent.id ? updatedEvent : event))
+    );
+    setShowForm(false);
+    setEditingEvent(null);
+  };
+
+  const deleteEvent = (eventId: string) => {
+    setEvents((prevEvents) => prevEvents?.filter((event) => event?.id !== eventId));
+  };
+
+  const handleDayClick = (day: number, dayType: "prev" | "current" | "next") => {
+    const selectedDate = new Date(
+      originalYear,
+      originalMonth + (dayType === "prev" ? -1 : dayType === "next" ? 1 : 0),
+      day
+    );
+
+    const selectedDateStr = selectedDate.toLocaleDateString("en-CA");
+    const todayStr = today.toLocaleDateString("en-CA");
+
+    const dayEvents = events?.filter((event) => event?.date === selectedDateStr);
+
+    if (dayEvents?.length > 0) {
+      return;
+    }
+
+    if (selectedDateStr < todayStr) {
+      alert("You cannot add events to days before today.");
+      return;
+    }
+
+    setCurrentDate(selectedDateStr);
+    setShowForm(true);
+  };
+
+  const handleEventClick = (event: TEvent) => {
+    setEditingEvent(event);
+    setCurrentDate(event?.date);
+    setShowForm(true);
   };
 
   return (
@@ -55,12 +125,41 @@ const Calendar = () => {
           const isToday = originalDate === day;
           const displayDay = day === 1 ? `${day} ${MONTH_LIST_SHORT[originalMonth]}` : day;
 
+          const dateStr = `${originalYear}-${(originalMonth + 1).toString().padStart(2, "0")}-${day
+            .toString()
+            .padStart(2, "0")}`;
+          const dayEvents = events?.filter((event) => event?.date === dateStr);
+
+          const backgroundColors = [];
+          dayEvents.forEach((event, eventIndex) => {
+            const eventColor = getColor(eventIndex);
+            backgroundColors.push(eventColor);
+          });
+
           return isToday ? (
-            <CalendarItems.Date key={idx}>
+            <CalendarItems.Date key={idx} onClick={() => handleDayClick(day, "current")}>
               <CalendarItems.Today>{displayDay}</CalendarItems.Today>
+              {dayEvents.map((event, eventIndex) => (
+                <EventName
+                  key={event?.id}
+                  background={getColor(eventIndex)}
+                  onClick={() => handleEventClick(event)}>
+                  {event?.name}
+                </EventName>
+              ))}
             </CalendarItems.Date>
           ) : (
-            <CalendarItems.Date key={idx}>{displayDay}</CalendarItems.Date>
+            <CalendarItems.Date key={idx} onClick={() => handleDayClick(day, "current")}>
+              {displayDay}
+              {dayEvents.map((event, eventIndex) => (
+                <EventName
+                  key={event?.id}
+                  background={getColor(eventIndex)}
+                  onClick={() => handleEventClick(event)}>
+                  {event?.name}
+                </EventName>
+              ))}
+            </CalendarItems.Date>
           );
         })}
 
@@ -75,6 +174,19 @@ const Calendar = () => {
           );
         })}
       </Grid>
+      {showForm && currentDate && (
+        <EventForm
+          date={currentDate}
+          event={editingEvent}
+          onSave={editingEvent ? editEvent : addEvent}
+          onDelete={deleteEvent}
+          onCancel={() => {
+            setShowForm(false);
+            setEditingEvent(null);
+          }}
+          isOpen={showForm}
+        />
+      )}
     </Container>
   );
 };

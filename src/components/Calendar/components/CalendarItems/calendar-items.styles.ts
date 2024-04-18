@@ -10,8 +10,8 @@ export const Day = styled.div`
 export const Date = styled.div<{ $gray?: boolean }>`
   font-size: 14px;
   min-height: 100px;
-  padding-top: 5px;
-  padding-right: 5px;
+  max-width: 136px;
+  padding: 5px 5px 0 5px;
   border-left: 1px solid #333333;
   border-top: 1px solid #333333;
   text-align: right;
@@ -33,7 +33,7 @@ export const Date = styled.div<{ $gray?: boolean }>`
 export const Today = styled.span`
   display: inline-block;
   color: white;
-  background-color: #1a73e8;
+  background-color: #3d5afe;
   border-radius: 50%;
   width: 24px;
   height: 24px;
