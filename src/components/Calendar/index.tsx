@@ -126,7 +126,7 @@ const Calendar = () => {
           const dayEvents = events?.filter((event) => event?.date === dateStr);
 
           const backgroundColors = [];
-          dayEvents.forEach((eventIndex) => {
+          dayEvents.forEach((_, eventIndex) => {
             const eventColor = getColor(eventIndex);
             backgroundColors.push(eventColor);
           });
