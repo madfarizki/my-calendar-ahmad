@@ -53,6 +53,13 @@ export const Label = styled.label`
   font-weight: bold;
   color: #333;
 `;
+
+export const Asterisk = styled.span`
+  color: red;
+  font-size: 12px;
+  font-weight: 500;
+`;
+
 export const Span = styled.span`
   font-weight: 500;
   color: #6f6f6f;

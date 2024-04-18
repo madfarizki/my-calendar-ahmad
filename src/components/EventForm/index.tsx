@@ -10,6 +10,7 @@ import {
   Form,
   Item,
   Label,
+  Asterisk,
   Span,
   Input,
   ButtonWrapper,
@@ -77,20 +78,27 @@ function EventForm({ date, event, isOpen, onCancel, onSave, onDelete }: EventFor
         <Title>{event ? "Edit Event" : "Add New Event"}</Title>
         <Form onSubmit={handleSubmit}>
           <Item>
-            <Label>Name</Label>
+            <Label>
+              Name<Asterisk>*</Asterisk>
+            </Label>
             <Input type="text" value={name} onChange={(e) => setName(e?.target?.value)} />
           </Item>
           <Item>
-            <Label>Date</Label>
+            <Label>
+              Date<Asterisk>*</Asterisk>
+            </Label>
             <Input type="date" value={date} disabled />
           </Item>
           <Item>
-            <Label>Time</Label>
+            <Label>
+              Time<Asterisk>*</Asterisk>
+            </Label>
             <Input type="time" value={time} onChange={(e) => setTime(e?.target?.value)} />
           </Item>
           <Item>
             <Label>
-              Invitees <Span>(email, separated by comma)</Span>
+              Invitees<Asterisk>* </Asterisk>
+              <Span>(email, separated by comma)</Span>
             </Label>
             <Input type="text" value={invitees} onChange={(e) => setInvitees(e?.target?.value)} />
           </Item>
