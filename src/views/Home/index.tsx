@@ -1,11 +1,11 @@
-import { Calendar } from "@/components/index";
+import { Calendar, Header } from "@/components/index";
 
-import { Container, Title } from "./home.styles";
+import { Container } from "./home.styles";
 
 function Home() {
   return (
     <Container>
-      <Title>My Personal Calendar</Title>
+      <Header />
       <Calendar />
     </Container>
   );
