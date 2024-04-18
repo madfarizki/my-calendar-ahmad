@@ -53,6 +53,7 @@ const Calendar = () => {
 
     if (eventDay.length >= 3) {
       alert("You can only add up to 3 events per day.");
+      setShowForm(false);
       return;
     }
 
@@ -81,12 +82,6 @@ const Calendar = () => {
 
     const selectedDateStr = selectedDate.toLocaleDateString("en-CA");
     const todayStr = today.toLocaleDateString("en-CA");
-
-    const dayEvents = events?.filter((event) => event?.date === selectedDateStr);
-
-    if (dayEvents?.length > 0) {
-      return;
-    }
 
     if (selectedDateStr < todayStr) {
       alert("You cannot add events to days before today.");
@@ -131,7 +126,7 @@ const Calendar = () => {
           const dayEvents = events?.filter((event) => event?.date === dateStr);
 
           const backgroundColors = [];
-          dayEvents.forEach((event, eventIndex) => {
+          dayEvents.forEach((eventIndex) => {
             const eventColor = getColor(eventIndex);
             backgroundColors.push(eventColor);
           });
@@ -143,7 +138,10 @@ const Calendar = () => {
                 <EventName
                   key={event?.id}
                   background={getColor(eventIndex)}
-                  onClick={() => handleEventClick(event)}>
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEventClick(event);
+                  }}>
                   {event?.name}
                 </EventName>
               ))}
@@ -155,7 +153,10 @@ const Calendar = () => {
                 <EventName
                   key={event?.id}
                   background={getColor(eventIndex)}
-                  onClick={() => handleEventClick(event)}>
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEventClick(event);
+                  }}>
                   {event?.name}
                 </EventName>
               ))}
