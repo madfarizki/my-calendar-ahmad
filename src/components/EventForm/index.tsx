@@ -81,7 +81,7 @@ function EventForm({ date, event, isOpen, onCancel, onSave, onDelete }: EventFor
             <Label>
               Name<Asterisk>*</Asterisk>
             </Label>
-            <Input type="text" value={name} onChange={(e) => setName(e?.target?.value)} />
+            <Input type="text" value={name} onChange={(e) => setName(e?.target?.value)} autoFocus />
           </Item>
           <Item>
             <Label>
